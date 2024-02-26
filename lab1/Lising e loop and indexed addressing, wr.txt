@@ -1,0 +1,70 @@
+Lising e loop and indexed addressing, write one that rettes the muminen of a 2- niger army forward one position. The value at the end. the array most woup are in the first postiin. For example, the array
+[10,20,30,40) wun be transformed in (40.10.20 write code in MASM assembly
+
+
+
+INCLUDE Irvine32.inc ; Include Irvine32 library for Windows API
+
+.data
+    array DWORD 10, 20, 30, 40    ; 4-element array [10, 20, 30, 40]
+
+.code
+main PROC
+    ; Display the original array
+    mov edx, OFFSET array ; Pointer to the array
+    mov ecx, 4            ; Number of elements in the array
+    call WriteIntArray    ; Custom procedure to write an integer array to the console
+
+    ; Rotate the array forward by one position
+    mov ecx, 1            ; Number of positions to rotate
+    call RotateArray      ; Custom procedure to rotate the array
+
+    ; Display the rotated array
+    call Crlf              ; Custom procedure to move the cursor to the next line
+    mov edx, OFFSET array  ; Pointer to the rotated array
+    mov ecx, 4             ; Number of elements in the array
+    call WriteIntArray     ; Custom procedure to write an integer array to the console
+
+    ; Exit the program
+    call WaitMsg
+    invoke ExitProcess, 0
+
+main ENDP
+
+RotateArray PROC
+    ; Rotate the elements of the array forward by the specified number of positions
+    ; Input: ecx - Number of positions to rotate
+
+    ; Loop to rotate the elements
+rotate_loop:
+    mov eax, [array]      ; Save the first element in eax
+    mov ebx, [array + 4]  ; Save the second element in ebx
+    mov ecx, [array + 8]  ; Save the third element in ecx
+    mov edx, [array + 12] ; Save the fourth element in edx
+
+    ; Shift the elements forward
+    mov [array + 4], eax  ; Move the first element to the second position
+    mov [array + 8], ebx  ; Move the second element to the third position
+    mov [array + 12], ecx ; Move the third element to the fourth position
+    mov [array], edx      ; Move the fourth element to the first position
+
+    ; Decrement the counter
+    loop rotate_loop
+
+    ret
+RotateArray ENDP
+
+WaitMsg PROC
+    ; Display a message to wait for user input
+    mov edx, OFFSET wait_msg
+    call WriteString
+
+    ; Wait for a key press
+    invoke ReadString
+    ret
+WaitMsg ENDP
+
+INCLUDE macros.inc ; Include Irvine32 library for additional macros
+wait_msg BYTE "Press any key to exit...", 0
+
+END main
